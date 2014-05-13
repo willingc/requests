@@ -213,7 +213,7 @@ class Request(RequestHooksMixin):
         auth=None,
         cookies=None,
         hooks=None,
-        json=None,):
+        json=None):
 
         # Default empty dicts for dict params.
         data = [] if data is None else data
@@ -519,9 +519,9 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
 
         """
 
-        logging.debug (dir(json))
-        self.text = json.dumps(json, default=str)
-        logging.debug (self.text)
+        logging.debug(self.json)
+        self.text = self.json
+        logging.debug(self.text)
         self.headers = 'Content-Type'
         logging.debug(self.headers)
         self.content = 'application/json'

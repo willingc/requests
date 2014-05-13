@@ -11,6 +11,7 @@ requests (cookies, auth, proxies).
 import os
 from collections import Mapping
 from datetime import datetime
+import logging
 
 from .auth import _basic_auth_str
 from .compat import cookielib, OrderedDict, urljoin, urlparse, builtin_str
@@ -263,7 +264,7 @@ class Session(SessionRedirectMixin):
     __attrs__ = [
         'headers', 'cookies', 'auth', 'timeout', 'proxies', 'hooks',
         'params', 'verify', 'cert', 'prefetch', 'adapters', 'stream',
-        'trust_env', 'max_redirects', 'json',]
+        'trust_env', 'max_redirects', 'json']
 
     def __init__(self):
 
@@ -372,7 +373,7 @@ class Session(SessionRedirectMixin):
             auth=merge_setting(auth, self.auth),
             cookies=merged_cookies,
             hooks=merge_hooks(request.hooks, self.hooks),
-            json=request.json,
+            json=request.json
         )
         return p
 
@@ -390,7 +391,7 @@ class Session(SessionRedirectMixin):
         stream=None,
         verify=None,
         cert=None,
-        json=None,
+        json=None
         ):
         """Constructs a :class:`Request <Request>`, prepares it and sends it.
         Returns :class:`Response <Response>` object.
@@ -436,10 +437,10 @@ class Session(SessionRedirectMixin):
             auth = auth,
             cookies = cookies,
             hooks = hooks,
-            json = json,
+            json = json
         )
-        logging.debug ("create the request")
-        logging.debug (json)
+        logging.debug("create the request")
+        logging.debug(json)
 
 
         prep = self.prepare_request(req)
