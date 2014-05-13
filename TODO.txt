@@ -1,0 +1,14 @@
+sessions.py
+request method
+
+
+models.py
+request
+preparedrequest objects
+
+
+json.dumps
+
+We have to tell it what we're
+sending, so in addition to using `json.dumps` we also have to set a
+`Content-Type` header with a value of `application/json`.

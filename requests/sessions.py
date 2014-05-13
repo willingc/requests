@@ -263,9 +263,11 @@ class Session(SessionRedirectMixin):
     __attrs__ = [
         'headers', 'cookies', 'auth', 'timeout', 'proxies', 'hooks',
         'params', 'verify', 'cert', 'prefetch', 'adapters', 'stream',
-        'trust_env', 'max_redirects']
+        'trust_env', 'max_redirects', 'json',]
 
     def __init__(self):
+
+        logging.debug("init session")
 
         #: A case-insensitive dictionary of headers to be sent on each
         #: :class:`Request <Request>` sent from this
@@ -275,6 +277,8 @@ class Session(SessionRedirectMixin):
         #: Default Authentication tuple or object to attach to
         #: :class:`Request <Request>`.
         self.auth = None
+
+
 
         #: Dictionary mapping protocol to the URL of the proxy (e.g.
         #: {'http': 'foo.bar:3128'}) to be used on each
@@ -288,6 +292,7 @@ class Session(SessionRedirectMixin):
         #: :class:`Request <Request>`. The dictionary values may be lists for
         #: representing multivalued query parameters.
         self.params = {}
+        self.json= {}
 
         #: Stream response content default.
         self.stream = False
@@ -316,6 +321,12 @@ class Session(SessionRedirectMixin):
         self.mount('https://', HTTPAdapter())
         self.mount('http://', HTTPAdapter())
 
+        logging.debug("leaving init")
+        logging.debug(self.json)
+
+
+
+
     def __enter__(self):
         return self
 
@@ -331,6 +342,7 @@ class Session(SessionRedirectMixin):
         :param request: :class:`Request` instance to prepare with this
             session's settings.
         """
+        logging.debug("entering prepared request method in sessions.py")
         cookies = request.cookies or {}
 
         # Bootstrap CookieJar.
@@ -347,7 +359,9 @@ class Session(SessionRedirectMixin):
         if self.trust_env and not auth and not self.auth:
             auth = get_netrc_auth(request.url)
 
+        logging.debug("calling a PreparedRequest object in sessions.py prepare_request method")
         p = PreparedRequest()
+        logging.debug("now that you have a PreparedObject call prepare method on object")
         p.prepare(
             method=request.method.upper(),
             url=request.url,
@@ -358,6 +372,7 @@ class Session(SessionRedirectMixin):
             auth=merge_setting(auth, self.auth),
             cookies=merged_cookies,
             hooks=merge_hooks(request.hooks, self.hooks),
+            json=request.json,
         )
         return p
 
@@ -374,7 +389,9 @@ class Session(SessionRedirectMixin):
         hooks=None,
         stream=None,
         verify=None,
-        cert=None):
+        cert=None,
+        json=None,
+        ):
         """Constructs a :class:`Request <Request>`, prepares it and sends it.
         Returns :class:`Response <Response>` object.
 
@@ -403,6 +420,7 @@ class Session(SessionRedirectMixin):
             A CA_BUNDLE path can also be provided.
         :param cert: (optional) if String, path to ssl client cert file (.pem).
             If Tuple, ('cert', 'key') pair.
+        :param json: (optional) json
         """
 
         method = builtin_str(method)
@@ -418,7 +436,12 @@ class Session(SessionRedirectMixin):
             auth = auth,
             cookies = cookies,
             hooks = hooks,
+            json = json,
         )
+        logging.debug ("create the request")
+        logging.debug (json)
+
+
         prep = self.prepare_request(req)
 
         proxies = proxies or {}
@@ -444,6 +467,7 @@ class Session(SessionRedirectMixin):
         verify = merge_setting(verify, self.verify)
         cert = merge_setting(cert, self.cert)
 
+
         # Send the request.
         send_kwargs = {
             'stream': stream,
@@ -455,6 +479,7 @@ class Session(SessionRedirectMixin):
         }
         resp = self.send(prep, **send_kwargs)
 
+        logging.debug("exiting sessions.py request")
         return resp
 
     def get(self, url, **kwargs):

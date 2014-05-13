@@ -9,6 +9,8 @@ This module contains the primary objects that power Requests.
 
 import collections
 import datetime
+import json
+import logging
 
 from io import BytesIO, UnsupportedOperation
 from .hooks import default_hooks
@@ -210,7 +212,8 @@ class Request(RequestHooksMixin):
         params=None,
         auth=None,
         cookies=None,
-        hooks=None):
+        hooks=None,
+        json=None,):
 
         # Default empty dicts for dict params.
         data = [] if data is None else data
@@ -218,6 +221,7 @@ class Request(RequestHooksMixin):
         headers = {} if headers is None else headers
         params = {} if params is None else params
         hooks = {} if hooks is None else hooks
+
 
         self.hooks = default_hooks()
         for (k, v) in list(hooks.items()):
@@ -231,6 +235,10 @@ class Request(RequestHooksMixin):
         self.params = params
         self.auth = auth
         self.cookies = cookies
+        self.json = json
+        logging.debug("create request")
+        logging.debug("init")
+        logging.debug(self.json)
 
     def __repr__(self):
         return '<Request [%s]>' % (self.method)
@@ -285,15 +293,22 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.body = None
         #: dictionary of callback hooks, for internal usage.
         self.hooks = default_hooks()
+        self.json = None
+        logging.debug("creating a PreparedRequest object in models.py")
+        logging.debug("json")
+        logging.debug(json)
 
     def prepare(self, method=None, url=None, headers=None, files=None,
-                data=None, params=None, auth=None, cookies=None, hooks=None):
+                data=None, params=None, auth=None, cookies=None, hooks=None, json=None):
         """Prepares the entire request with the given parameters."""
-
+        logging.debug("entering prepare method")
+        logging.debug(json)
+        self.prepare_json(json)
         self.prepare_method(method)
         self.prepare_url(url, params)
         self.prepare_headers(headers)
         self.prepare_cookies(cookies)
+
         self.prepare_body(data, files)
         self.prepare_auth(auth, url)
         # Note that prepare_auth must be last to enable authentication schemes
@@ -301,6 +316,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
 
         # This MUST go after prepare_auth. Authenticators could add a hook
         self.prepare_hooks(hooks)
+        logging.debug("exiting prepare method")
 
     def __repr__(self):
         return '<PreparedRequest [%s]>' % (self.method)
@@ -496,6 +512,21 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         """Prepares the given hooks."""
         for event in hooks:
             self.register_hook(event, hooks[event])
+
+    def prepare_json(self, json):
+        """Takes object and prepares for post.
+
+
+        """
+
+        logging.debug (dir(json))
+        self.text = json.dumps(json, default=str)
+        logging.debug (self.text)
+        self.headers = 'Content-Type'
+        logging.debug(self.headers)
+        self.content = 'application/json'
+        logging.debug(self.content)
+
 
 
 class Response(object):
