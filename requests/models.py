@@ -209,6 +209,7 @@ class Request(RequestHooksMixin):
         headers=None,
         files=None,
         data=None,
+        json=None,
         params=None,
         auth=None,
         cookies=None,
@@ -216,6 +217,7 @@ class Request(RequestHooksMixin):
 
         # Default empty dicts for dict params.
         data = [] if data is None else data
+        json = [] if json is None else json
         files = [] if files is None else files
         headers = {} if headers is None else headers
         params = {} if params is None else params
@@ -230,6 +232,7 @@ class Request(RequestHooksMixin):
         self.headers = headers
         self.files = files
         self.data = data
+        self.json = json
         self.params = params
         self.auth = auth
         self.cookies = cookies
@@ -246,6 +249,7 @@ class Request(RequestHooksMixin):
             headers=self.headers,
             files=self.files,
             data=self.data,
+            json=self.json,
             params=self.params,
             auth=self.auth,
             cookies=self.cookies,
@@ -289,7 +293,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.hooks = default_hooks()
 
     def prepare(self, method=None, url=None, headers=None, files=None,
-                data=None, params=None, auth=None, cookies=None, hooks=None):
+                data=None, json=None, params=None, auth=None, cookies=None, hooks=None):
         """Prepares the entire request with the given parameters."""
 
         self.prepare_method(method)

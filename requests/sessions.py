@@ -358,6 +358,7 @@ class Session(SessionRedirectMixin):
             url=request.url,
             files=request.files,
             data=request.data,
+            json=request.json,
             headers=merge_setting(request.headers, self.headers, dict_class=CaseInsensitiveDict),
             params=merge_setting(request.params, self.params),
             auth=merge_setting(auth, self.auth),
@@ -369,6 +370,7 @@ class Session(SessionRedirectMixin):
     def request(self, method, url,
         params=None,
         data=None,
+        json=None,
         headers=None,
         cookies=None,
         files=None,
@@ -419,6 +421,7 @@ class Session(SessionRedirectMixin):
             headers = headers,
             files = files,
             data = data or {},
+            json = json or {},
             params = params or {},
             auth = auth,
             cookies = cookies,
@@ -492,7 +495,7 @@ class Session(SessionRedirectMixin):
         kwargs.setdefault('allow_redirects', False)
         return self.request('HEAD', url, **kwargs)
 
-    def post(self, url, data=None, **kwargs):
+    def post(self, url, data=None, json=None, **kwargs):
         """Sends a POST request. Returns :class:`Response` object.
 
         :param url: URL for the new :class:`Request` object.
@@ -500,7 +503,7 @@ class Session(SessionRedirectMixin):
         :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 
-        return self.request('POST', url, data=data, **kwargs)
+        return self.request('POST', url, data=data, json=_json, **kwargs)
 
     def put(self, url, data=None, **kwargs):
         """Sends a PUT request. Returns :class:`Response` object.
