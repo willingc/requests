@@ -398,6 +398,8 @@ class Session(SessionRedirectMixin):
             string for the :class:`Request`.
         :param data: (optional) Dictionary or bytes to send in the body of the
             :class:`Request`.
+        :param json: (optional) JSON to send in the body of the
+            :class:`Request`.
         :param headers: (optional) Dictionary of HTTP Headers to send with the
             :class:`Request`.
         :param cookies: (optional) Dict or CookieJar object to send with the
@@ -487,6 +489,7 @@ class Session(SessionRedirectMixin):
 
         :param url: URL for the new :class:`Request` object.
         :param data: (optional) Dictionary, bytes, or file-like object to send in the body of the :class:`Request`.
+        :param json: (optional) json to send in the body of the :class: `Request`.
         :param \*\*kwargs: Optional arguments that ``request`` takes.
         """
 

@@ -23,7 +23,7 @@ r = requests.post('http://httpbin.org/post', json={
     }
 }
 )
-print r
-print r.json()
-print r.encoding
-print r.headers
+print("r: ", r)
+print("r.json():", r.json())
+print("r.encoding:", r.encoding)
+print("r.headers:", r.headers)

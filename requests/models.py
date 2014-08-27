@@ -9,6 +9,7 @@ This module contains the primary objects that power Requests.
 
 import collections
 import datetime
+import json
 
 from io import BytesIO, UnsupportedOperation
 from .hooks import default_hooks
@@ -300,6 +301,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.prepare_url(url, params)
         self.prepare_headers(headers)
         self.prepare_cookies(cookies)
+        self.prepare_json(json)
         self.prepare_body(data, files)
         self.prepare_auth(auth, url)
         # Note that prepare_auth must be last to enable authentication schemes
@@ -393,6 +395,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         url = requote_uri(urlunparse([scheme, netloc, path, None, query, fragment]))
         self.url = url
 
+
     def prepare_headers(self, headers):
         """Prepares the given HTTP headers."""
 
@@ -400,6 +403,11 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             self.headers = CaseInsensitiveDict((to_native_string(name), value) for name, value in headers.items())
         else:
             self.headers = CaseInsensitiveDict()
+
+    def prepare_json(self, json):
+        #   set Content-Type to application/json
+        if (not 'content-type' in self.headers):
+            self.headers['Content-Type'] = 'application/json'
 
     def prepare_body(self, data, files):
         """Prepares the given HTTP body data."""
